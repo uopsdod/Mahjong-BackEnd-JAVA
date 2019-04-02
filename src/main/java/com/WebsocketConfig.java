@@ -16,7 +16,7 @@ public class WebsocketConfig implements WebSocketConfigurer {
 
     @Bean
     public WebSocketHandler myMessageHandler() {
-        return new MyMessageHandler();
+        return new MyTextWebSocketHandler();
     }
 
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {

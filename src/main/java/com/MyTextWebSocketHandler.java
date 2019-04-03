@@ -34,13 +34,15 @@ public class MyTextWebSocketHandler extends TextWebSocketHandler {
             System.out.println("enough waiting players - create a room");
             int count = 0;
             Room room = new Room(UUID.randomUUID().toString());
-            List<Player> players = room.getPlayers();
+            List<Player> playersToJoin = new ArrayList<>();
 
             // collect players to the same room
             for (Map.Entry<WebSocketSession, Player> entry : playerMaps.entrySet()){
                 Player player = entry.getValue();
                 player.setStatus("playing");
-                players.add(player);
+
+                playersToJoin.add(player);
+
                 count++;
                 if (count >= expectedNumberOfPlayer) {
                     break;
@@ -49,7 +51,7 @@ public class MyTextWebSocketHandler extends TextWebSocketHandler {
             System.out.println("room.getPlayers().size(): " + room.getPlayers().size());
 
             // send "initiateGame to all players in this room
-            for (Player player: players){
+            for (Player player: playersToJoin){
                 BiMap<Player, WebSocketSession> inverse = playerMaps.inverse();
                 WebSocketSession sessionInRoom =inverse.get(player);
                 sessionInRoom.sendMessage(new TextMessage("initiateGame"));

@@ -38,6 +38,28 @@ public class MyTextWebSocketHandler extends TextWebSocketHandler {
 
     }
 
+
+    private void joinGame(WebSocketSession session, JsonObject jsonObject, BiMap<WebSocketSession, Player> playerMaps, int expectedNumberOfPlayer, BiMap<WebSocketSession, Room> roomMaps, String eventname) throws IOException {
+        Gson gson = new Gson();
+        JsonObject jobj = new JsonObject();
+        String playerId = jsonObject.get("playerId").getAsString();
+        System.out.println("joingame matched");
+        Player p = new Player(playerId, "waitting");
+        playerMaps.put(session, p);
+        System.out.println("players ++: " + playerMaps.values().toString());
+
+        // send back ack to clients
+        jobj.addProperty("event", eventname);
+        jobj.add("player", gson.toJsonTree(p));
+        session.sendMessage(new TextMessage(gson.toJson(jobj)));
+
+        // check current waiting number
+        long waitingNumber = playerMaps.values().stream().filter(innerPlayer -> innerPlayer.getStatus().equalsIgnoreCase("waitting")).count();
+        System.out.println("waitingNumber: " + waitingNumber);
+        if (waitingNumber >= expectedNumberOfPlayer) {
+            initiateGame(playerMaps, expectedNumberOfPlayer, roomMaps, session);
+        }
+    }
     private void initiateGame(BiMap<WebSocketSession, Player> playerMaps, int expectedNumberOfPlayer, BiMap<WebSocketSession, Room> roomMaps
                                 ,WebSocketSession session) throws IOException {
         JsonObject jobj = new JsonObject();
@@ -92,23 +114,7 @@ public class MyTextWebSocketHandler extends TextWebSocketHandler {
                 String event = jsonObject.get("event").getAsString();
 
                 if (event.equalsIgnoreCase("joingame")) {
-                    String playerId = jsonObject.get("playerId").getAsString();
-                    System.out.println("joingame matched");
-                    Player p = new Player(playerId, "waitting");
-                    playerMaps.put(session, p);
-                    System.out.println("players ++: " + playerMaps.values().toString());
-
-                    // send back ack to clients
-                    jobj.addProperty("event", EVENT_JOINGAME + EVENT_SUFFIX);
-                    jobj.add("player", gson.toJsonTree(p));
-                    session.sendMessage(new TextMessage(gson.toJson(jobj)));
-
-                    // check current waiting number
-                    long waitingNumber = playerMaps.values().stream().filter(innerPlayer -> innerPlayer.getStatus().equalsIgnoreCase("waitting")).count();
-                    System.out.println("waitingNumber: " + waitingNumber);
-                    if (waitingNumber >= expectedNumberOfPlayer) {
-                        initiateGame(playerMaps, expectedNumberOfPlayer, roomMaps, session);
-                    }
+                    joinGame(session, jsonObject, playerMaps, expectedNumberOfPlayer, roomMaps, EVENT_JOINGAME + EVENT_SUFFIX);
                 }
 
                 if (event.equalsIgnoreCase("endgame")){

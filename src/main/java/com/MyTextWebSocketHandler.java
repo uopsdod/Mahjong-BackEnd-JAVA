@@ -72,6 +72,7 @@ public class MyTextWebSocketHandler extends TextWebSocketHandler {
 
 
             jobj.addProperty("event", "initiateGame");
+            jobj.add("room", gson.toJsonTree(room));
 
             sessionInRoom.sendMessage(new TextMessage(gson.toJson(jobj)));
         }
@@ -91,8 +92,9 @@ public class MyTextWebSocketHandler extends TextWebSocketHandler {
                 String event = jsonObject.get("event").getAsString();
 
                 if (event.equalsIgnoreCase("joingame")) {
+                    String playerId = jsonObject.get("playerId").getAsString();
                     System.out.println("joingame matched");
-                    Player p = new Player(UUID.randomUUID().toString(), "waitting");
+                    Player p = new Player(playerId, "waitting");
                     playerMaps.put(session, p);
                     System.out.println("players ++: " + playerMaps.values().toString());
 
@@ -114,7 +116,6 @@ public class MyTextWebSocketHandler extends TextWebSocketHandler {
 
                     Room room = roomMaps.get(session);
                     List<Player> playersToLeaveRoom = room.getPlayers();
-                    // send "initiateGame to all players in this room
                     for (Player player: playersToLeaveRoom){
 
                         BiMap<Player, WebSocketSession> inverse = playerMaps.inverse();

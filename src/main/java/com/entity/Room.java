@@ -13,7 +13,7 @@ public class Room {
     private Long startMS;
     private Long endMS;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)  // for error: Attempt to persist a reference to a non managed com.entity.Player instance - field com.entity.Room.players
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)  // for error: Attempt to persist a reference to a non managed com.entity.Player instance - field com.entity.Room.players // ref: https://stackoverflow.com/questions/15749359/objectdb-relation-ships
     private Set<Player> players = new HashSet<>();
 
     public Room(String roomID){

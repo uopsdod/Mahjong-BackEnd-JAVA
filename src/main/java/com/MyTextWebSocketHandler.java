@@ -12,6 +12,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
 import java.util.*;
 
 public class MyTextWebSocketHandler extends TextWebSocketHandler {
@@ -26,7 +27,7 @@ public class MyTextWebSocketHandler extends TextWebSocketHandler {
     private Gson gson = new Gson();
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         // TODO: when someone leaves the room, terminate the game for all others as well
         playerMaps.remove(session);
         System.out.println("players --: " + playerMaps.values().toString());
@@ -39,55 +40,61 @@ public class MyTextWebSocketHandler extends TextWebSocketHandler {
         playerMaps.put(session, p);
         System.out.println("players ++: " + playerMaps.values().toString());
 
-        // check current waiting number
-        long waitingNumber = playerMaps.values().stream().filter(innerPlayer -> innerPlayer.getStatus().equalsIgnoreCase("waitting")).count();
-        System.out.println("waitingNumber: " + waitingNumber);
-
         // send back ack to clients
         jobj.addProperty("event", EVENT_JOINGAME + EVENT_SUFFIX);
         session.sendMessage(new TextMessage(gson.toJson(jobj)));
 
+        // check current waiting number
+        long waitingNumber = playerMaps.values().stream().filter(innerPlayer -> innerPlayer.getStatus().equalsIgnoreCase("waitting")).count();
+        System.out.println("waitingNumber: " + waitingNumber);
+        if (waitingNumber >= expectedNumberOfPlayer) {
+            initiateGame(playerMaps, expectedNumberOfPlayer, roomMaps, session);
+        }
+
+    }
+
+    private void initiateGame(BiMap<WebSocketSession, Player> playerMaps, int expectedNumberOfPlayer, BiMap<WebSocketSession, Room> roomMaps
+                                ,WebSocketSession session) throws IOException {
+        JsonObject jobj = new JsonObject();
+
         // initiate a game
-        if (waitingNumber >= expectedNumberOfPlayer){
-            System.out.println("enough waiting players - create a room");
-            int count = 0;
-            Room room = new Room(UUID.randomUUID().toString());
-            List<Player> playersToJoin = room.getPlayers();
+        System.out.println("enough waiting players - create a room");
+        int count = 0;
+        Room room = new Room(UUID.randomUUID().toString());
+        List<Player> playersToJoin = room.getPlayers();
 
-            // collect players to the same room
-            for (Map.Entry<WebSocketSession, Player> entry : playerMaps.entrySet()){
-                Player player = entry.getValue();
-                player.setStatus("playing");
+        // collect players to the same room
+        for (Map.Entry<WebSocketSession, Player> entry : playerMaps.entrySet()){
+            Player player = entry.getValue();
+            player.setStatus("playing");
 
-                playersToJoin.add(player);
+            playersToJoin.add(player);
 
-                count++;
-                if (count >= expectedNumberOfPlayer) {
-                    break;
-                }
+            count++;
+            if (count >= expectedNumberOfPlayer) {
+                break;
             }
-            System.out.println("room.getPlayers().size(): " + room.getPlayers().size());
+        }
+        System.out.println("room.getPlayers().size(): " + room.getPlayers().size());
 
-            // send "initiateGame to all players in this room
-            for (Player player: playersToJoin){
+        // send "initiateGame to all players in this room
+        for (Player player: playersToJoin){
 
-                roomMaps.put(session,room);
+            roomMaps.put(session,room);
 
-                BiMap<Player, WebSocketSession> inverse = playerMaps.inverse();
-                WebSocketSession sessionInRoom =inverse.get(player);
+            BiMap<Player, WebSocketSession> inverse = playerMaps.inverse();
+            WebSocketSession sessionInRoom =inverse.get(player);
 
 
-                jobj.addProperty("event", "initiateGame");
+            jobj.addProperty("event", "initiateGame");
 
-                sessionInRoom.sendMessage(new TextMessage(gson.toJson(jobj)));
-            }
-
+            sessionInRoom.sendMessage(new TextMessage(gson.toJson(jobj)));
         }
 
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage textMessage) throws Exception {
+    protected void handleTextMessage(WebSocketSession session, TextMessage textMessage) {
         JsonObject jobj = new JsonObject();
         // A message has been received
         String payload = textMessage.getPayload();

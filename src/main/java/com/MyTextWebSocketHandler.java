@@ -35,21 +35,6 @@ public class MyTextWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        JsonObject jobj = new JsonObject();
-        Player p = new Player(UUID.randomUUID().toString(), "waitting");
-        playerMaps.put(session, p);
-        System.out.println("players ++: " + playerMaps.values().toString());
-
-        // send back ack to clients
-        jobj.addProperty("event", EVENT_JOINGAME + EVENT_SUFFIX);
-        session.sendMessage(new TextMessage(gson.toJson(jobj)));
-
-        // check current waiting number
-        long waitingNumber = playerMaps.values().stream().filter(innerPlayer -> innerPlayer.getStatus().equalsIgnoreCase("waitting")).count();
-        System.out.println("waitingNumber: " + waitingNumber);
-        if (waitingNumber >= expectedNumberOfPlayer) {
-            initiateGame(playerMaps, expectedNumberOfPlayer, roomMaps, session);
-        }
 
     }
 
@@ -104,6 +89,25 @@ public class MyTextWebSocketHandler extends TextWebSocketHandler {
             if (jsonElement.isJsonObject()){
                 JsonObject jsonObject = jsonElement.getAsJsonObject();
                 String event = jsonObject.get("event").getAsString();
+
+                if (event.equalsIgnoreCase("joingame")) {
+                    System.out.println("joingame matched");
+                    Player p = new Player(UUID.randomUUID().toString(), "waitting");
+                    playerMaps.put(session, p);
+                    System.out.println("players ++: " + playerMaps.values().toString());
+
+                    // send back ack to clients
+                    jobj.addProperty("event", EVENT_JOINGAME + EVENT_SUFFIX);
+                    jobj.add("player", gson.toJsonTree(p));
+                    session.sendMessage(new TextMessage(gson.toJson(jobj)));
+
+                    // check current waiting number
+                    long waitingNumber = playerMaps.values().stream().filter(innerPlayer -> innerPlayer.getStatus().equalsIgnoreCase("waitting")).count();
+                    System.out.println("waitingNumber: " + waitingNumber);
+                    if (waitingNumber >= expectedNumberOfPlayer) {
+                        initiateGame(playerMaps, expectedNumberOfPlayer, roomMaps, session);
+                    }
+                }
 
                 if (event.equalsIgnoreCase("endgame")){
                     System.out.println("endgame matched");

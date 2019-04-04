@@ -1,5 +1,7 @@
-package com;
+package com.event;
 
+import com.entity.Player;
+import com.entity.Room;
 import com.google.common.collect.BiMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -8,8 +10,6 @@ import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 public class EndGameEvent implements Event {
 

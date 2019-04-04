@@ -1,5 +1,7 @@
-package com;
+package com.event;
 
+import com.entity.Player;
+import com.entity.Room;
 import com.google.common.collect.BiMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

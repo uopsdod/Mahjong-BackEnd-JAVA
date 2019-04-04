@@ -2,6 +2,7 @@ package com;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -19,8 +20,9 @@ public class MyTextWebSocketHandler extends TextWebSocketHandler {
     public static final String EVENT_JOINGAME = "joingame";
     public static final String EVENT_ENDGAME = "endgame";
 //    private LinkedHashMap<WebSocketSession, Player> playerMaps = new LinkedHashMap<>();
-    private BiMap<WebSocketSession, Player> playerMaps = HashBiMap.create();
-    private BiMap<WebSocketSession, Room> roomMaps = HashBiMap.create();
+
+    private BiMap<WebSocketSession, Player> playerMaps = Maps.synchronizedBiMap(HashBiMap.create());
+    private BiMap<WebSocketSession, Room> roomMaps = Maps.synchronizedBiMap(HashBiMap.create());
     private Gson gson = new Gson();
 
     @Override

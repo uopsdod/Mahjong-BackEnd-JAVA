@@ -7,6 +7,15 @@
     <groupId>Mahjong-BackEnd-Java</groupId>
     <artifactId>Mahjong-BackEnd-Java</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <repositories>
+        <repository>
+            <id>objectdb</id>
+            <name>ObjectDB Repository</name>
+            <url>http://m2.objectdb.com</url>
+        </repository>
+    </repositories>
+
         <parent>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-parent</artifactId>
@@ -75,6 +84,25 @@
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
                 <version>2.8.5</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>com.objectdb</groupId>
+                <artifactId>objectdb</artifactId>
+                <version>2.7.6</version>
+            </dependency>
+            <!--objectdb : additional dependencies are now required when using ObjectDB outside Java EE environment:-->
+            <dependency>
+                <groupId>org.eclipse.persistence</groupId>
+                <artifactId>javax.persistence</artifactId>
+                <version>2.1.0</version>
+            </dependency>
+            <!--objectdb : additional dependencies are now required when using ObjectDB outside Java EE environment:-->
+            <dependency>
+                <groupId>javax.transaction</groupId>
+                <artifactId>jta</artifactId>
+                <version>1.1</version>
             </dependency>
 
         </dependencies>

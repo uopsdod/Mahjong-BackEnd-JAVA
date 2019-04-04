@@ -11,6 +11,7 @@ import org.springframework.web.socket.WebSocketSession;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class JoinGameEvent implements Event {
@@ -69,7 +70,7 @@ public class JoinGameEvent implements Event {
         System.out.println("enough waiting players - create a room");
         int count = 0;
         Room room = new Room(UUID.randomUUID().toString());
-        List<Player> playersToJoin = room.getPlayers();
+        Set<Player> playersToJoin = room.getPlayers();
 
         // collect players to the same room
         for (Map.Entry<WebSocketSession, Player> entry : playerMaps.entrySet()){

@@ -3,12 +3,19 @@ package com.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import javax.persistence.Entity;
 
 @Data
-@AllArgsConstructor
+//@AllArgsConstructor
+@Entity
 public class Player {
     private String playerID;
     private String status;
+
+    public Player(String playerID, String status){
+        this.playerID = playerID;
+        this.status = status;
+    }
 
     @Override
     public String toString()

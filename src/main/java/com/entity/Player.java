@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Data
 //@AllArgsConstructor
@@ -11,6 +13,10 @@ import javax.persistence.Entity;
 public class Player {
     private String playerID;
     private String status;
+
+    @ManyToOne
+    @JoinColumn(name="roomID")
+    private Room room;
 
     public Player(String playerID, String status){
         this.playerID = playerID;

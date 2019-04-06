@@ -5,6 +5,8 @@ import com.entity.Room;
 import com.google.common.collect.BiMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -17,6 +19,7 @@ import java.util.Set;
 
 public class EndGameEvent implements Event {
 
+    private EntityManager em;
     public static final String EVENT_SUFFIX = "_done";
     public static final String EVENT_ENDGAME = "endgame";
     private final WebSocketSession session;
@@ -24,11 +27,12 @@ public class EndGameEvent implements Event {
     private final BiMap<WebSocketSession, Player> playerMaps;
     private final BiMap<WebSocketSession, Room> roomMaps;
 
-    public EndGameEvent(WebSocketSession session, JsonObject payloadJsonObj, BiMap<WebSocketSession, Player> playerMaps, BiMap<WebSocketSession, Room> roomMaps){
+    public EndGameEvent(WebSocketSession session, JsonObject payloadJsonObj, BiMap<WebSocketSession, Player> playerMaps, BiMap<WebSocketSession, Room> roomMaps, EntityManager em){
         this.session = session;
         this.payloadJsonObj = payloadJsonObj;
         this.playerMaps = playerMaps;
         this.roomMaps = roomMaps;
+        this.em = em;
     }
 
     @Override
@@ -55,8 +59,8 @@ public class EndGameEvent implements Event {
 
             // TODO: store the result in db
             room.setEndMS(new java.util.Date().getTime());
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("/Users/stsai/Desktop/points009.odb");
-            EntityManager em = emf.createEntityManager();
+//            EntityManagerFactory emf = Persistence.createEntityManagerFactory("/Users/stsai/Desktop/points009.odb");
+//            EntityManager em = emf.createEntityManager();
 
             em.getTransaction().begin();
             em.persist(room);

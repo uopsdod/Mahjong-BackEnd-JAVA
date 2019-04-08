@@ -1,24 +1,27 @@
-package com.entity;
+package com.mj.entity;
 
-import lombok.AllArgsConstructor;
+import com.mj.Controller.Exclude;
 import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+
+import javax.persistence.*;
 
 @Data
 //@AllArgsConstructor
 @Entity
 public class Player {
-    private String playerID;
+    @Id
+    private Long playerID;
     private String status;
+    @Column(name="ROOM_ID")
+    private Long roomID;
 
-    @ManyToOne
-    @JoinColumn(name="roomID")
+    @Exclude
+    @ManyToOne(fetch= FetchType.LAZY)
+    @JoinColumn(name="ROOM_ID")
     private Room room;
 
-    public Player(String playerID, String status){
+    public Player(Long playerID, String status){
         this.playerID = playerID;
         this.status = status;
     }

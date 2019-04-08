@@ -1,18 +1,21 @@
-package com.event;
+package com.mj.event;
 
-import com.entity.Player;
-import com.entity.Room;
+import com.google.gson.GsonBuilder;
+import com.mj.AnnotationExclusionStrategy;
+import com.mj.entity.Player;
+import com.mj.entity.Room;
 import com.google.common.collect.BiMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.RandomUtils;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import javax.jdo.annotations.Transactional;
+import javax.persistence.EntityManager;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 public class JoinGameEvent implements Event {
 
@@ -23,12 +26,14 @@ public class JoinGameEvent implements Event {
     private final JsonObject payloadJsonObj;
     private final BiMap<WebSocketSession, Player> playerMaps;
     private final BiMap<WebSocketSession, Room> roomMaps;
+    private final EntityManager em;
 
-    public JoinGameEvent(WebSocketSession session, JsonObject payloadJsonObj, BiMap<WebSocketSession, Player> playerMaps, BiMap<WebSocketSession, Room> roomMaps){
+    public JoinGameEvent(WebSocketSession session, JsonObject payloadJsonObj, BiMap<WebSocketSession, Player> playerMaps, BiMap<WebSocketSession, Room> roomMaps, EntityManager em){
         this.session = session;
         this.payloadJsonObj = payloadJsonObj;
         this.playerMaps = playerMaps;
         this.roomMaps = roomMaps;
+        this.em = em;
     }
 
     @Override
@@ -40,14 +45,18 @@ public class JoinGameEvent implements Event {
         }
     }
 
+    @Transactional
     private void joinGame(WebSocketSession session, JsonObject jsonObject, BiMap<WebSocketSession, Player> playerMaps, BiMap<WebSocketSession, Room> roomMaps) throws IOException {
         Gson gson = new Gson();
         JsonObject jobj = new JsonObject();
-        String playerId = jsonObject.get("playerId").getAsString();
+        Long playerId = jsonObject.get("playerId").getAsLong();
         System.out.println("joingame matched");
         Player p = new Player(playerId, "waitting");
         playerMaps.put(session, p);
         System.out.println("players ++: " + playerMaps.values().toString());
+
+//         insert player into db if no exist
+//        em.persist(p);
 
         // send back ack to clients
         jobj.addProperty("event", EVENT_JOINGAME + EVENT_SUFFIX);
@@ -64,12 +73,13 @@ public class JoinGameEvent implements Event {
     private void initiateGame(BiMap<WebSocketSession, Player> playerMaps, int expectedNumberOfPlayer, BiMap<WebSocketSession, Room> roomMaps
             ,WebSocketSession session) throws IOException {
         JsonObject jobj = new JsonObject();
-        Gson gson = new Gson();
+//        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setExclusionStrategies(new AnnotationExclusionStrategy()).create();
 
         // initiate a game
         System.out.println("enough waiting players - create a room");
         int count = 0;
-        Room room = new Room(UUID.randomUUID().toString());
+        Room room = new Room(RandomUtils.nextLong(1000000,9999999));
         Set<Player> playersToJoin = room.getPlayers();
 
         // collect players to the same room
@@ -77,7 +87,12 @@ public class JoinGameEvent implements Event {
             Player player = entry.getValue();
             player.setStatus("playing");
 
-            playersToJoin.add(player);
+
+//            Player managedPlayer = em.find(Player.class, player);
+//            managedPlayer.setRoomID(room.getRoomID());
+
+            playersToJoin.add(player); // one-to-many
+            player.setRoom(room); // many-to-one
 
             count++;
             if (count >= expectedNumberOfPlayer) {

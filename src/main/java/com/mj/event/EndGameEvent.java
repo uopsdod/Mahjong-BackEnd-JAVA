@@ -1,20 +1,15 @@
-package com.event;
+package com.mj.event;
 
-import com.entity.Player;
-import com.entity.Room;
+import com.mj.entity.Player;
+import com.mj.entity.Room;
 import com.google.common.collect.BiMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 
 public class EndGameEvent implements Event {

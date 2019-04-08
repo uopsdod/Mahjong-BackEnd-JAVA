@@ -1,7 +1,7 @@
-package com.event;
+package com.mj.event;
 
-import com.entity.Player;
-import com.entity.Room;
+import com.mj.entity.Player;
+import com.mj.entity.Room;
 import com.google.common.collect.BiMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -31,7 +31,7 @@ public class EventFactory {
 
             /** create event **/
             if (event.equalsIgnoreCase("joingame")) {
-                return new JoinGameEvent(session, payloadJsonObj, playerMaps, roomMaps);
+                return new JoinGameEvent(session, payloadJsonObj, playerMaps, roomMaps, em);
             }
 
             if (event.equalsIgnoreCase("endgame")){

@@ -73,26 +73,21 @@ public class JoinGameEvent implements Event {
     private void initiateGame(BiMap<WebSocketSession, Player> playerMaps, int expectedNumberOfPlayer, BiMap<WebSocketSession, Room> roomMaps
             ,WebSocketSession session) throws IOException {
         JsonObject jobj = new JsonObject();
-//        Gson gson = new Gson();
         Gson gson = new GsonBuilder().setExclusionStrategies(new AnnotationExclusionStrategy()).create();
 
         // initiate a game
         System.out.println("enough waiting players - create a room");
         int count = 0;
         Room room = new Room(RandomUtils.nextLong(1000000,9999999));
-        Set<Player> playersToJoin = room.getPlayers();
+        Set<Player> roomPlayers = room.getPlayers();
 
         // collect players to the same room
         for (Map.Entry<WebSocketSession, Player> entry : playerMaps.entrySet()){
+
             Player player = entry.getValue();
             player.setStatus("playing");
-
-
-//            Player managedPlayer = em.find(Player.class, player);
-//            managedPlayer.setRoomID(room.getRoomID());
-
-            playersToJoin.add(player); // one-to-many
             player.setRoom(room); // many-to-one
+            roomPlayers.add(player); // one-to-many
 
             count++;
             if (count >= expectedNumberOfPlayer) {
@@ -102,7 +97,7 @@ public class JoinGameEvent implements Event {
         System.out.println("room.getPlayers().size(): " + room.getPlayers().size());
 
         // send "initiateGame to all players in this room
-        for (Player player: playersToJoin){
+        for (Player player: roomPlayers){
 
             roomMaps.put(session,room);
 

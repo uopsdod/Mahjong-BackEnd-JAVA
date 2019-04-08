@@ -15,7 +15,9 @@ public class Room {
     private Long startMS;
     private Long endMS;
 
-//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy="room")  // for error: Attempt to persist a reference to a non managed Player instance - field Room.players // ref: https://stackoverflow.com/questions/15749359/objectdb-relation-ships
+
+    // for error: Attempt to persist a reference to a non managed Player instance - field Room.players // ref: https://stackoverflow.com/questions/15749359/objectdb-relation-ships
+    // great ref for OneToMany: https://en.wikibooks.org/wiki/Java_Persistence/OneToMany#Example_of_a_OneToMany_relationship_and_inverse_ManyToOne_annotations
     @OneToMany(targetEntity= Player.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy="room")
     private Set<Player> players = new HashSet<>();
 

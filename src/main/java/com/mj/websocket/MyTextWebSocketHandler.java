@@ -1,9 +1,9 @@
-package com.websocket;
+package com.mj.websocket;
 
-import com.entity.Player;
-import com.entity.Room;
-import com.event.Event;
-import com.event.EventFactory;
+import com.mj.event.Event;
+import com.mj.event.EventFactory;
+import com.mj.entity.Player;
+import com.mj.entity.Room;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;

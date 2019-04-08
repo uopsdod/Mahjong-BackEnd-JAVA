@@ -1,4 +1,4 @@
-package com.event;
+package com.mj.event;
 
 public interface Event {
     public void execute();

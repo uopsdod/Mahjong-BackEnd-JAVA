@@ -1,4 +1,4 @@
-package com.websocket;
+package com.mj.websocket;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

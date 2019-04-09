@@ -1,5 +1,6 @@
-package com.mj.entity;
+package com.mj.room;
 
+import com.mj.players.Player;
 import lombok.Data;
 
 import javax.persistence.*;

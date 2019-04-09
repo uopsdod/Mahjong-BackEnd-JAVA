@@ -1,7 +1,5 @@
-package com.mj.Controller;
+package com.mj.room;
 
-import com.mj.entity.Room;
-import com.mj.entity.RoomData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +29,7 @@ public class RoomController {
 //            System.out.println(r);
 //        }
 
-        String queryStr ="SELECT NEW com.mj.entity.RoomData(r.roomID, r.players) "
+        String queryStr ="SELECT NEW com.mj.room.RoomData(r.roomID, r.players) "
                          + "FROM Room AS r"; // this will call the constructor multiple times according to the size of the players list
         TypedQuery<RoomData> query2 = em.createQuery(queryStr, RoomData.class);
         List<RoomData> results2 = query2.getResultList();

@@ -20,7 +20,7 @@ public class MyApplication {
 
     @Bean
     public EntityManagerFactory entityManagerFactory(){
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("/Users/stsai/Desktop/points016.odb");
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("/Users/stsai/Desktop/points017.odb");
         return emf;
     }
 

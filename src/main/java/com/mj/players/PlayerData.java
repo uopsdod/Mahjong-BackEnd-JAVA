@@ -1,4 +1,4 @@
-package com.mj.entity;
+package com.mj.players;
 
 import lombok.Data;
 

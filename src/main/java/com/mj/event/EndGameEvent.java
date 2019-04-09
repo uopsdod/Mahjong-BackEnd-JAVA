@@ -1,7 +1,7 @@
 package com.mj.event;
 
-import com.mj.entity.Player;
-import com.mj.entity.Room;
+import com.mj.players.Player;
+import com.mj.room.Room;
 import com.google.common.collect.BiMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

@@ -1,8 +1,6 @@
-package com.mj.Controller;
+package com.mj.players;
 
 import com.google.gson.Gson;
-import com.mj.entity.Player;
-import com.mj.entity.PlayerData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,14 +27,13 @@ public class PlayerController {
     {
 //        em.getTransaction().begin();
 
-//        TypedQuery<Player> query = em.createQuery("SELECT p FROM Player p", com.mj.entity.Player.class);
+//        TypedQuery<Player> query = em.createQuery("SELECT p FROM Player p", com.mj.players.Player.class);
 //        List<Player> results = query.getResultList();
 //        for (Player p : results) {
 //            System.out.println(p);
 //        }
 
-
-        String queryStr ="SELECT NEW com.mj.entity.PlayerData(p.playerID, p.room.roomID) "
+        String queryStr ="SELECT NEW "+ PlayerData.class.getName() + " (p.playerID, p.room.roomID) "
                         + "FROM Player AS p";
         TypedQuery<PlayerData> query2 = em.createQuery(queryStr, PlayerData.class);
         List<PlayerData> results2 = query2.getResultList();

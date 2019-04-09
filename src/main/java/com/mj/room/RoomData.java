@@ -1,11 +1,10 @@
-package com.mj.entity;
+package com.mj.room;
 
+import com.mj.players.Player;
+import com.mj.players.PlayerData;
 import lombok.Data;
 
-import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Data

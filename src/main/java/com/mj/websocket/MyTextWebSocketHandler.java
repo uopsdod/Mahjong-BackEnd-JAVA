@@ -2,8 +2,8 @@ package com.mj.websocket;
 
 import com.mj.event.Event;
 import com.mj.event.EventFactory;
-import com.mj.entity.Player;
-import com.mj.entity.Room;
+import com.mj.players.Player;
+import com.mj.room.Room;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
